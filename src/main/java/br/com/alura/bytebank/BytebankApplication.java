@@ -14,27 +14,16 @@ public class BytebankApplication {
 
     public static void main(String[] args) {
         var opcao = exibirMenu();
-        while (opcao != 7) {
+        while (opcao != 8) {
             try {
                 switch (opcao) {
-                    case 1:
-                        listarContas();
-                        break;
-                    case 2:
-                        abrirConta();
-                        break;
-                    case 3:
-                        encerrarConta();
-                        break;
-                    case 4:
-                        consultarSaldo();
-                        break;
-                    case 5:
-                        realizarSaque();
-                        break;
-                    case 6:
-                        realizarDeposito();
-                        break;
+                    case 1 -> listarContas();
+                    case 2 -> abrirConta();
+                    case 3 -> encerrarConta();
+                    case 4 -> consultarSaldo();
+                    case 5 -> realizarSaque();
+                    case 6 -> realizarDeposito();
+                    case 7 -> consultarConta();
                 }
             } catch (RegraDeNegocioException e) {
                 System.out.println("Erro: " +e.getMessage());
@@ -56,7 +45,8 @@ public class BytebankApplication {
                 4 - Consultar saldo de uma conta
                 5 - Realizar saque em uma conta
                 6 - Realizar depósito em uma conta
-                7 - Sair
+                7 - Consultar conta
+                8 - Sair
                 """);
         return teclado.nextInt();
     }
@@ -106,6 +96,16 @@ public class BytebankApplication {
         var numeroDaConta = teclado.nextInt();
         var saldo = service.consultarSaldo(numeroDaConta);
         System.out.println("Saldo da conta: " +saldo);
+
+        System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");
+        teclado.next();
+    }
+
+    private static void consultarConta() {
+        System.out.println("Digite o número da conta:");
+        var numeroDaConta = teclado.nextInt();
+        var conta = service.consultarConta(numeroDaConta);
+        System.out.println(conta);
 
         System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");
         teclado.next();

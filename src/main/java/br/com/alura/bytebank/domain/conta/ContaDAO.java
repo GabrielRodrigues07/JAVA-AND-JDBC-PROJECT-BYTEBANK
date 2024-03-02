@@ -77,8 +77,39 @@ public class ContaDAO {
             throw new RuntimeException(e);
         }
 
+        return conta;
+    }
 
+    public Conta buscarUsandoNumeroDaConta(Integer numeroConta) {
 
+        String sql = "SELECT * FROM conta WHERE numero = ?";
+        PreparedStatement preparedStatement;
+        ResultSet resultSet;
+        Conta conta = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, numeroConta);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Integer numero = resultSet.getInt(1);
+                BigDecimal saldo = resultSet.getBigDecimal(2);
+                String nome = resultSet.getString(3);
+                String cpf = resultSet.getString(4);
+                String email = resultSet.getString(5);
+
+                DadosCadastroCliente dadosCadastroCliente = new DadosCadastroCliente(nome, cpf, email);
+                Cliente cliente = new Cliente(dadosCadastroCliente);
+
+                conta = new Conta(numero, cliente);
+            }
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return conta;
     }
 }
