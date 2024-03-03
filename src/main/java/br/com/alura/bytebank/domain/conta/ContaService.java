@@ -2,6 +2,7 @@ package br.com.alura.bytebank.domain.conta;
 
 import br.com.alura.bytebank.ConnectionFactory;
 import br.com.alura.bytebank.domain.RegraDeNegocioException;
+import br.com.alura.bytebank.domain.exceptions.NotFoundException;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -20,12 +21,23 @@ public class ContaService {
     private Set<Conta> contas = new HashSet<>();
 
     public Set<Conta> listarContasAbertas() {
-        return contas;
+        Connection conn = connection.recuperarConexao();
+        return new ContaDAO(conn).listar();
     }
 
     public BigDecimal consultarSaldo(Integer numeroDaConta) {
         var conta = buscarContaPorNumero(numeroDaConta);
         return conta.getSaldo();
+    }
+
+    public Conta consultarConta(Integer numeroDaConta) {
+        Connection conn = connection.recuperarConexao();
+        Conta conta = new ContaDAO(conn).buscarUsandoNumeroDaConta(numeroDaConta);
+        if (Objects.nonNull(conta)) {
+            return conta;
+        } else {
+            throw new NotFoundException("Nenhuma conta encontrada com número informado: " + numeroDaConta);
+        }
     }
 
     public void abrir(DadosAberturaConta dadosDaConta) {
