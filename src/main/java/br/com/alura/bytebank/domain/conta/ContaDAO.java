@@ -24,7 +24,7 @@ public class ContaDAO {
     public void salvar(DadosAberturaConta dadosDaConta) {
 
         var cliente = new Cliente(dadosDaConta.dadosCliente());
-        var conta = new Conta(dadosDaConta.numero(), cliente);
+        var conta = new Conta(dadosDaConta.numero(), BigDecimal.ZERO, cliente);
 
         String sql = "INSERT INTO conta(numero, saldo, cliente_nome, cliente_cpf, cliente_email) " +
                 "VALUES(?, ?, ?, ?, ?)";
@@ -69,9 +69,7 @@ public class ContaDAO {
                 DadosCadastroCliente dadosCadastroCliente = new DadosCadastroCliente(nome, cpf, email);
                 Cliente cliente = new Cliente(dadosCadastroCliente);
 
-                Conta contaEntity = new Conta(numero, cliente);
-                contaEntity.setSaldo(saldo);
-                conta.add(contaEntity);
+                conta.add(new Conta(numero, saldo, cliente));
             }
             resultSet.close();
             ps.close();
@@ -106,8 +104,7 @@ public class ContaDAO {
                 DadosCadastroCliente dadosCadastroCliente = new DadosCadastroCliente(nome, cpf, email);
                 Cliente cliente = new Cliente(dadosCadastroCliente);
 
-                conta = new Conta(numero, cliente);
-                conta.setSaldo(saldo);
+                conta = new Conta(numero, saldo, cliente);
             }
             resultSet.close();
             preparedStatement.close();
@@ -130,7 +127,30 @@ public class ContaDAO {
             int i = preparedStatement.executeUpdate();
 
             if (Objects.equals(i, 0)) {
-                throw new NotUpdateException("Houve um algum problema ao depositar valor");
+                throw new NotUpdateException("Houve algum problema ao depositar valor");
+            }
+
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void sacar(Integer numeroConta, BigDecimal valorSaque) {
+
+        String sql = "UPDATE conta SET saldo = saldo - ? WHERE numero = ?";
+        PreparedStatement preparedStatement;
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setBigDecimal(1, valorSaque);
+            preparedStatement.setInt(2, numeroConta);
+            int i = preparedStatement.executeUpdate();
+
+            if (Objects.equals(i, 0)) {
+                throw new NotUpdateException("Houve algum problema ao sacar valor");
             }
 
             preparedStatement.close();
