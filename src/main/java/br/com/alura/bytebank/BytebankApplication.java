@@ -1,6 +1,6 @@
 package br.com.alura.bytebank;
 
-import br.com.alura.bytebank.domain.RegraDeNegocioException;
+import br.com.alura.bytebank.domain.exceptions.RegraDeNegocioException;
 import br.com.alura.bytebank.domain.cliente.DadosCadastroCliente;
 import br.com.alura.bytebank.domain.conta.ContaService;
 import br.com.alura.bytebank.domain.conta.DadosAberturaConta;
