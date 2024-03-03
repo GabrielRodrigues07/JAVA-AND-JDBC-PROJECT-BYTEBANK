@@ -62,4 +62,8 @@ public class Conta {
     public Cliente getTitular() {
         return titular;
     }
+
+    public void setSaldo(BigDecimal saldo) {
+        this.saldo = saldo;
+    }
 }

@@ -2,6 +2,7 @@ package br.com.alura.bytebank.domain.conta;
 
 import br.com.alura.bytebank.domain.cliente.Cliente;
 import br.com.alura.bytebank.domain.cliente.DadosCadastroCliente;
+import br.com.alura.bytebank.domain.exceptions.NotUpdateException;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -9,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class ContaDAO {
@@ -41,7 +43,7 @@ public class ContaDAO {
 
             preparedStatement.close();
             connection.close();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -67,7 +69,9 @@ public class ContaDAO {
                 DadosCadastroCliente dadosCadastroCliente = new DadosCadastroCliente(nome, cpf, email);
                 Cliente cliente = new Cliente(dadosCadastroCliente);
 
-                conta.add(new Conta(numero, cliente));
+                Conta contaEntity = new Conta(numero, cliente);
+                contaEntity.setSaldo(saldo);
+                conta.add(contaEntity);
             }
             resultSet.close();
             ps.close();
@@ -103,6 +107,7 @@ public class ContaDAO {
                 Cliente cliente = new Cliente(dadosCadastroCliente);
 
                 conta = new Conta(numero, cliente);
+                conta.setSaldo(saldo);
             }
             resultSet.close();
             preparedStatement.close();
@@ -111,5 +116,28 @@ public class ContaDAO {
             throw new RuntimeException(e);
         }
         return conta;
+    }
+
+    public void depositar(Integer numeroConta, BigDecimal valorDeposito) {
+
+        String sql = "UPDATE conta SET saldo = saldo + ? WHERE numero = ?";
+        PreparedStatement preparedStatement;
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setBigDecimal(1, valorDeposito);
+            preparedStatement.setInt(2, numeroConta);
+            int i = preparedStatement.executeUpdate();
+
+            if (Objects.equals(i, 0)) {
+                throw new NotUpdateException("Houve um algum problema ao depositar valor");
+            }
+
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

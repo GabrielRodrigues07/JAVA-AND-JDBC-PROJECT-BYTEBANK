@@ -1,7 +1,7 @@
 package br.com.alura.bytebank.domain.conta;
 
 import br.com.alura.bytebank.ConnectionFactory;
-import br.com.alura.bytebank.domain.RegraDeNegocioException;
+import br.com.alura.bytebank.domain.exceptions.RegraDeNegocioException;
 import br.com.alura.bytebank.domain.exceptions.NotFoundException;
 
 import java.math.BigDecimal;
@@ -62,12 +62,12 @@ public class ContaService {
     }
 
     public void realizarDeposito(Integer numeroDaConta, BigDecimal valor) {
-        var conta = buscarContaPorNumero(numeroDaConta);
+        consultarConta(numeroDaConta);
+        Connection conn = connection.recuperarConexao();
         if (valor.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RegraDeNegocioException("Valor do deposito deve ser superior a zero!");
         }
-
-        conta.depositar(valor);
+        new ContaDAO(conn).depositar(numeroDaConta, valor);
     }
 
     public void encerrar(Integer numeroDaConta) {
