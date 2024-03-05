@@ -1,9 +1,9 @@
 package br.com.alura.bytebank;
 
-import br.com.alura.bytebank.domain.exceptions.RegraDeNegocioException;
 import br.com.alura.bytebank.domain.cliente.DadosCadastroCliente;
 import br.com.alura.bytebank.domain.conta.ContaService;
 import br.com.alura.bytebank.domain.conta.DadosAberturaConta;
+import br.com.alura.bytebank.domain.exceptions.RegraDeNegocioException;
 
 import java.util.Scanner;
 
@@ -14,7 +14,7 @@ public class BytebankApplication {
 
     public static void main(String[] args) {
         var opcao = exibirMenu();
-        while (opcao != 8) {
+        while (opcao != 9) {
             try {
                 switch (opcao) {
                     case 1 -> listarContas();
@@ -24,6 +24,7 @@ public class BytebankApplication {
                     case 5 -> realizarSaque();
                     case 6 -> realizarDeposito();
                     case 7 -> consultarConta();
+                    case 8 -> realizarTransferencia();
                 }
             } catch (RegraDeNegocioException e) {
                 System.out.println("Erro: " +e.getMessage());
@@ -46,7 +47,8 @@ public class BytebankApplication {
                 5 - Realizar saque em uma conta
                 6 - Realizar depósito em uma conta
                 7 - Consultar conta
-                8 - Sair
+                8 - Realizar transferência
+                9 - Sair
                 """);
         return teclado.nextInt();
     }
@@ -134,6 +136,24 @@ public class BytebankApplication {
         service.realizarDeposito(numeroDaConta, valor);
 
         System.out.println("Depósito realizado com sucesso!");
+        System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");
+        teclado.next();
+    }
+
+    private static void realizarTransferencia() {
+        System.out.println("Digite o número da conta de Origem:");
+        var numeroDaContaOrigem = teclado.nextInt();
+        teclado.nextLine();
+
+        System.out.println("Digite o número da conta de Destino:");
+        var numeroDaContaDestino = teclado.nextInt();
+
+        System.out.println("Digite o valor a ser transferido:");
+        var valor = teclado.nextBigDecimal();
+
+        service.realizarTransferencia(numeroDaContaOrigem, numeroDaContaDestino, valor);
+
+        System.out.println("Transferência realizada com sucesso!");
         System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");
         teclado.next();
     }
