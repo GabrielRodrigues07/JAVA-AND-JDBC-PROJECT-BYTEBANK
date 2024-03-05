@@ -87,4 +87,10 @@ public class ContaService {
                 .findFirst()
                 .orElseThrow(() -> new RegraDeNegocioException("Não existe conta cadastrada com esse número!"));
     }
+
+    public void realizarTransferencia(Integer numeroContaOrigem, Integer numeroContaDestino, BigDecimal valor) {
+
+        realizarSaque(numeroContaOrigem, valor);
+        realizarDeposito(numeroContaDestino, valor);
+    }
 }
