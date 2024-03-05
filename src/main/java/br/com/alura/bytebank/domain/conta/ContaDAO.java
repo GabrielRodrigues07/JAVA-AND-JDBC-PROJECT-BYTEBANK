@@ -160,4 +160,27 @@ public class ContaDAO {
         }
 
     }
+
+    public void deletar(Integer numeroConta) {
+
+        String sql = "DELETE FROM conta WHERE numero = ? ";
+
+        PreparedStatement preparedStatement;
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, numeroConta);
+
+            int i = preparedStatement.executeUpdate();
+
+            if (Objects.equals(i, 0)) {
+                throw new NotUpdateException("Houve algum problema ao Encerrar conta");
+            }
+
+            preparedStatement.close();
+            connection.close();
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
